@@ -18,14 +18,13 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		
 		System.out.println("https://github.com/RogerMinemu/BioHelp");
 		JsonReader jr = new JsonReader(args[0]);
 
 		BioHelpSQLConnector bioDBConnector = new BioHelpSQLConnector(jr.getField("dbhostname"), jr.getField("dbusername"), jr.getField("dbpassword"), jr.getField("database"));
 		Vector<BioData> bioData = bioDBConnector.getAllData();
-		
-		//Telegram Init
+
+		// Telegram Init
 		ApiContextInitializer.init();
 		TelegramBotsApi botsApi = new TelegramBotsApi();
 
@@ -37,17 +36,18 @@ public class Main
 		{
 			e.printStackTrace();
 		}
-		
+
 		Scanner sc = new Scanner(System.in);
 		String input;
-		
+
 		do
 		{
 			System.out.println("Some testing input: ");
 			input = sc.nextLine();
-			
+
 			System.out.println(Similarity.compare("bases de datos de metabolomica", input));
-		} while(input != "salir");
+		}
+		while (input != "salir");
 	}
 
 }

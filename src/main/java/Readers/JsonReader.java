@@ -6,7 +6,8 @@ import java.util.Scanner;
 
 import com.google.gson.*;
 
-public class JsonReader {
+public class JsonReader
+{
 	private JsonObject json;
 
 	private String getFileContent(String path) throws FileNotFoundException

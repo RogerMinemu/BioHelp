@@ -1,4 +1,5 @@
 package Telegram;
+
 import org.telegram.telegrambots.api.objects.Update;
 
 public class TelegramThread extends Thread
@@ -9,9 +10,9 @@ public class TelegramThread extends Thread
 	{
 		this.update = update;
 	}
-	
+
 	public void run()
-	{		
+	{
 		String userMessage = this.update.getMessage().getText();
 	}
 }
