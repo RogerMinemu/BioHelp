@@ -1,7 +1,8 @@
+package Readers;
 import com.google.gson.*;
 
-public class JsonReader {
-
+public class JsonReader
+{
 	private JsonObject json;
 	
 	public JsonReader(String ruta)
@@ -13,6 +14,4 @@ public class JsonReader {
 	{
 		return json.get(field).getAsString();
 	}
-	
-	
 }
