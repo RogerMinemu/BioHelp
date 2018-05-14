@@ -30,7 +30,7 @@ public class Main
 
 		try
 		{
-			botsApi.registerBot(new TelegramListener());
+			botsApi.registerBot(new TelegramListener(jr.getField("telegramBotAPI"), bioData));
 		}
 		catch (TelegramApiException e)
 		{
