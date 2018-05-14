@@ -11,18 +11,18 @@ import java.util.Vector;
 
 import Holders.BioData;
 
-public class SQLConnector
+public class BioHelpSQLConnector
 {
 	private Connection connect = null;
     private Statement statement = null;
     
-    public SQLConnector(String host, String user, String pass)
+    public BioHelpSQLConnector(String host, String user, String pass, String dbname)
     {
         try 
         {
         	Class.forName("com.mysql.cj.jdbc.Driver");
         	
-			this.connect = DriverManager.getConnection("jdbc:mysql://" + host + "/biohelp?user=" + user + "&password=" + pass + "&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+			this.connect = DriverManager.getConnection("jdbc:mysql://" + host + "/" + dbname + "?user=" + user + "&password=" + pass + "&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
 			this.statement = this.connect.createStatement();
 		}
         catch (SQLException e)

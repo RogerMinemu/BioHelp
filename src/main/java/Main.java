@@ -1,5 +1,4 @@
 
-import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -8,7 +7,10 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 
 import Holders.BioData;
-import Readers.SQLConnector;
+
+import Readers.JsonReader;
+import Readers.BioHelpSQLConnector;
+
 import Telegram.TelegramListener;
 import Telegram.TelegramThread;
 
@@ -18,6 +20,10 @@ public class Main
 	{
 		
 		System.out.println("https://github.com/RogerMinemu/BioHelp");
+		JsonReader jr = new JsonReader(args[0]);
+
+		BioHelpSQLConnector bioDBConnector = new BioHelpSQLConnector(jr.getField("dbhostname"), jr.getField("dbusername"), jr.getField("dbpassword"), jr.getField("database"));
+		Vector<BioData> bioData = bioDBConnector.getAllData();
 		
 		//Telegram Init
 		ApiContextInitializer.init();
