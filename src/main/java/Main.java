@@ -46,7 +46,7 @@ public class Main
 		{
 			e.printStackTrace();
 		}
-
+		
 		Scanner consoleInput = new Scanner(System.in);
 
 		while(true)
