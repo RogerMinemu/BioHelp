@@ -14,7 +14,6 @@ import Readers.JsonReader;
 import Readers.BioHelpSQLConnector;
 
 import Telegram.TelegramListener;
-import Telegram.TelegramThread;
 
 public class Main
 {
@@ -36,9 +35,12 @@ public class Main
 		ApiContextInitializer.init();
 		TelegramBotsApi botsApi = new TelegramBotsApi();
 
+		TelegramListener telegramListener = new TelegramListener(jr.getField("telegramBotAPI"), bioData);
+		(new DBListener(telegramListener, bioDBConnector)).start();
+
 		try
 		{
-			botsApi.registerBot(new TelegramListener(jr.getField("telegramBotAPI"), bioData));
+			botsApi.registerBot(telegramListener);
 		}
 		catch (TelegramApiException e)
 		{

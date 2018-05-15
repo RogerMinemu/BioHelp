@@ -57,6 +57,25 @@ public class BioHelpSQLConnector
 		}
 	}
 
+	public int getDataVersion()
+	{
+		try
+		{
+			ResultSet resultSet = this.statement.executeQuery("SELECT `value` FROM `dbconfig` WHERE `field` = 'last_data_version';");
+
+			while (resultSet.next())
+			{
+				return resultSet.getInt("value");
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		return 0;
+	}
+
 	public Vector<BioData> getAllData()
 	{
 		Vector<BioData> retData = new Vector<BioData>();
@@ -75,6 +94,7 @@ public class BioHelpSQLConnector
 		{
 			e.printStackTrace();
 		}
+
 		log.warn("Saved BioData in local");
 		return retData;
 	}

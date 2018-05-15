@@ -22,6 +22,7 @@ public class TelegramThread extends Thread
 	{
 		this.update = update;
 		this.bioData = bioData;
+		this.telegramListener = telegramListener;
 	}
 
 	public void run()
@@ -46,7 +47,7 @@ public class TelegramThread extends Thread
 		SendMessage userMessage = new SendMessage();
 		log.info(answer);
 
-		userMessage.setChatId(this.update.getChannelPost().getChatId());
+		userMessage.setChatId(this.update.getMessage().getChatId());
 		userMessage.setText(answer);
 
 		this.telegramListener.sendResponse(userMessage);
