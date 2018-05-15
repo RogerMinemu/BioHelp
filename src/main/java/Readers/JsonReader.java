@@ -4,14 +4,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import org.apache.log4j.Logger;
+
 import com.google.gson.*;
 
 public class JsonReader
 {
 	private JsonObject json;
+	private Logger log = Logger.getLogger("JsonReader");
 
 	private String getFileContent(String path) throws FileNotFoundException
 	{
+		log.info("Getting Config Content");
 		File file = new File(path);
 		StringBuilder fileContents = new StringBuilder((int) file.length());
 

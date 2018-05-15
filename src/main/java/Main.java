@@ -3,6 +3,8 @@ import java.util.Scanner;
 import java.util.Vector;
 
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 
@@ -18,7 +20,12 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		System.out.println("https://github.com/RogerMinemu/BioHelp");
+		PropertyConfigurator.configure("log4j.properties");
+		Logger log = Logger.getLogger("BioHelp");
+		log.info("https://github.com/RogerMinemu/BioHelp");
+		log.info("======================================");
+		
+		log.info("Trying to load config in: " + args[0]);
 		JsonReader jr = new JsonReader(args[0]);
 
 		BioHelpSQLConnector bioDBConnector = new BioHelpSQLConnector(jr.getField("dbhostname"), jr.getField("dbusername"), jr.getField("dbpassword"), jr.getField("database"));
@@ -39,13 +46,26 @@ public class Main
 
 		Scanner sc = new Scanner(System.in);
 		String input;
+		
+		
 
 		do
 		{
-			System.out.println("Some testing input: ");
+			log.info("Some testing input: ");
 			input = sc.nextLine();
+			int simpos = 0;
+			double simint = 0;
+			for(int i = 0; i < bioData.size(); i++)
+			{
+				if(simint < Similarity.compare(input, bioData.get(i).question))
+				{
+					simpos = i;
+					simint = Similarity.compare(input, bioData.get(i).question);
+					log.info("New veracity record: " + simint);
+				}
+			}
 
-			System.out.println(Similarity.compare("bases de datos de metabolomica", input));
+			log.info(bioData.get(simpos).answer);
 		}
 		while (input != "salir");
 	}

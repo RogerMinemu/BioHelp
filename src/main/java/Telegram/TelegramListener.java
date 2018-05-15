@@ -2,6 +2,7 @@ package Telegram;
 
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
@@ -11,6 +12,7 @@ public class TelegramListener extends TelegramLongPollingBot
 {
 	private String telegramBotAPI;
 	private Vector<BioData> bioData;
+	Logger log = Logger.getLogger("Telegram Listener");
 	
 	public TelegramListener(String telegramBotAPI, Vector<BioData> bioData)
 	{
@@ -32,6 +34,7 @@ public class TelegramListener extends TelegramLongPollingBot
 	{
 		if (update.hasMessage() && update.getMessage().hasText())
 		{
+			log.info("Creating Thread for user: " + update.getMessage().getFrom().getUserName());
 			(new TelegramThread(update, bioData)).start();
 		}
 	}
