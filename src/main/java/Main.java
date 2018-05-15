@@ -22,6 +22,7 @@ public class Main
 	{
 		PropertyConfigurator.configure("log4j.properties");
 		Logger log = Logger.getLogger("BioHelp");
+
 		log.info("https://github.com/RogerMinemu/BioHelp");
 		log.info("======================================");
 		
@@ -46,8 +47,6 @@ public class Main
 
 		Scanner sc = new Scanner(System.in);
 		String input;
-		
-		
 
 		do
 		{
