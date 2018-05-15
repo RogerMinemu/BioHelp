@@ -4,6 +4,15 @@ public class Similarity
 
 	public static double compare(String s1, String s2)
 	{
+		s1 = s1.replace("?", "");
+		s2 = s2.replace("?", "");
+		
+		s1 = s1.replace("!", "");
+		s2 = s2.replace("!", "");
+		
+		s1 = s1.replace(".", "");
+		s2 = s2.replace(".", "");
+		
 		String longer = s1, shorter = s2;
 		if (s1.length() < s2.length())
 		{ // longer should always have greater length
