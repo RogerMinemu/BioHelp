@@ -45,15 +45,21 @@ public class Main
 			e.printStackTrace();
 		}
 
-		Scanner sc = new Scanner(System.in);
-		String input;
+		Scanner consoleInput = new Scanner(System.in);
 
-		do
+		while(true)
 		{
 			log.info("Some testing input: ");
-			input = sc.nextLine();
-			int simpos = 0;
+			String input = consoleInput.nextLine();
+
+			if(input.equals("exit"))
+			{
+				break;
+			}
+
 			double simint = 0;
+			int simpos = 0;
+
 			for(int i = 0; i < bioData.size(); i++)
 			{
 				if(simint < Similarity.compare(input, bioData.get(i).question))
@@ -66,7 +72,10 @@ public class Main
 
 			log.info(bioData.get(simpos).answer);
 		}
-		while (input != "salir");
-	}
 
+		log.info("Exit the application");
+		consoleInput.close();
+
+		System.exit(0);
+	}
 }
