@@ -1,8 +1,7 @@
 package Telegram;
 
 import java.util.Vector;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -17,7 +16,9 @@ public class TelegramListener extends TelegramLongPollingBot
 	private String telegramBotAPI;
 	private Vector<BioData> bioData;
 
-	Lock mutex = new ReentrantLock();
+	// NOTE(Andrei): use read-write lock as there are several readers
+	//               and only one writter.
+	ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 	Logger log = Logger.getLogger("Telegram Listener");
 
 	public TelegramListener(String telegramBotAPI, Vector<BioData> bioData)
@@ -42,22 +43,27 @@ public class TelegramListener extends TelegramLongPollingBot
 		{
 			log.info("Creating Thread for user: " + update.getMessage().getFrom().getUserName());
 
-			this.mutex.lock();
-				(new TelegramThread(update, bioData, this)).start();
-			this.mutex.unlock();
+			// NOTE(Andrei): Allow multiple readers as long as no writer is waiting,
+			//               the unlock is done in sendResponse functions because is
+			//               when each one of the threads has stopped using the data.
+			this.readWriteLock.readLock().lock();
+			(new TelegramThread(update, bioData, this)).start();
 		}
 	}
 
 	public void updateDate(Vector<BioData> bioData)
 	{
-		this.mutex.lock();
+		this.readWriteLock.writeLock().lock();
 			this.bioData.clear();
 			this.bioData = bioData;
-		this.mutex.unlock();
+		this.readWriteLock.writeLock().unlock();
 	}
 
 	public void sendResponse(SendMessage userMessage)
 	{
+	    // NOTE(Andrei): Unlock the writer as is done using the data.
+	    this.readWriteLock.readLock().unlock();
+
 		try
 		{
 			execute(userMessage);
