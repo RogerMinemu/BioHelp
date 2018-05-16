@@ -1,7 +1,8 @@
 package Telegram;
 
 import java.util.Vector;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.StampedLock;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -18,7 +19,7 @@ public class TelegramListener extends TelegramLongPollingBot
 
 	// NOTE(Andrei): use read-write lock as there are several readers
 	//               and only one writter.
-	ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+	ReadWriteLock readWriteLock = new StampedLock().asReadWriteLock();
 	Logger log = Logger.getLogger("Telegram Listener");
 
 	public TelegramListener(String telegramBotAPI, Vector<BioData> bioData)
