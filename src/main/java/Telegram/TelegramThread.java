@@ -11,64 +11,82 @@ import Readers.BioHelpSQLConnector;
 import Readers.JsonReader;
 import TextUtils.Similarity;
 
-public class TelegramThread extends Thread 
+public class TelegramThread extends Thread
 {
-	private Update update;
-	private Vector<BioData> bioData;
-	private BioHelpSQLConnector bioDBConnector;
+    private Update update;
+    private Vector<BioData> bioData;
+    private BioHelpSQLConnector bioDBConnector;
 
-	private TelegramListener telegramListener;
-	private Logger log = Logger.getLogger("Telegram Thread");
+    private TelegramListener telegramListener;
+    private Logger log = Logger.getLogger("Telegram Thread");
 
-	
-	public TelegramThread(Update update, Vector<BioData> bioData, TelegramListener telegramListener, BioHelpSQLConnector bioDBConnector) 
-	{
-		this.update = update;
-		this.bioData = bioData;
-		this.telegramListener = telegramListener;
-	}
+    public TelegramThread(Update update, Vector<BioData> bioData, TelegramListener telegramListener, BioHelpSQLConnector bioDBConnector)
+    {
+        this.update = update;
+        this.bioData = bioData;
 
-	public void run() {
-		String input = this.update.getMessage().getText();
-		String answer = null;
-		long chatID = update.getMessage().getChatId();
-		double simint = 0;
-		int simpos = 0;
+        this.bioDBConnector = bioDBConnector;
+        this.telegramListener = telegramListener;
+    }
 
-		// NOTE (Roger): Falta hacer que coja el numero pasado por pregunta y lo use
-		// 				 como 2do parametro en setVeracity
-		if (Similarity.compare(input, "Cambiar veracidad a") > 0.63) 
-		{
-			if(bioDBConnector.getVeracity(chatID) == -1)
-			{
-				bioDBConnector.setVeracity(chatID, 50);
-			}
-		} 
-		else 
-		{
-			for (int i = 0; i < this.bioData.size(); i++) 
-			{
-				if (simint < Similarity.compare(input, this.bioData.get(i).question)) 
-				{
-					simpos = i;
-					simint = Similarity.compare(input, this.bioData.get(i).question);
-				}
-			}
+    private void saveVeracity(String userRequestString, SendMessage userSendMessage)
+    {
+        long chatID = Long.parseLong(userSendMessage.getChatId());
+        String userMessage = "Veracidad cambiada correctamente.";
 
-			if (simint < 0.5) // if veracity is under %
-			{
-				answer = "BioHelp no sabe que estás preguntando, prueba a formular de diferente manera la pregunta.";
-				log.warn("Veracity: " + simint + " - BioHelp doesn't know what is the user asking");
-			}
-			else
-			{
-				answer = this.bioData.get(simpos).answer;
-				log.info("Veracity: " + simint + " - " + answer);
-			}
-		}
-		SendMessage userMessage = new SendMessage();
-		userMessage.setChatId(this.update.getMessage().getChatId());
-		userMessage.setText(answer);
+        if (this.bioDBConnector.getVeracity(chatID) == -1)
+        {
+            userMessage = this.bioDBConnector.setVeracity(chatID, 50);
+        }
 
-	}
+        userSendMessage.setText(userMessage);
+        this.telegramListener.sendResponse(userSendMessage);
+    }
+
+    private void processUserMessage(String userRequestString, SendMessage userSendMessage)
+    {
+        double simint = 0;
+        int simpos = 0;
+
+        for (int i = 0; i < this.bioData.size(); i++)
+        {
+            if (simint < Similarity.compare(userRequestString, this.bioData.get(i).question))
+            {
+                simpos = i;
+                simint = Similarity.compare(userRequestString, this.bioData.get(i).question);
+            }
+        }
+
+        if (simint < 0.5) // if veracity is under %
+        {
+            userSendMessage.setText("BioHelp no sabe que estás preguntando, prueba a formular de diferente manera la pregunta.");
+            log.warn("Veracity: " + simint + " - BioHelp doesn't know what is the user asking");
+        }
+        else
+        {
+            userSendMessage.setText(this.bioData.get(simpos).answer);
+            log.info("Veracity: " + simint + " - " + this.bioData.get(simpos).answer);
+        }
+
+        this.telegramListener.sendResponse(userSendMessage);
+    }
+
+    public void run()
+    {
+        String userRequestString = this.update.getMessage().getText();
+
+        SendMessage userSendMessage = new SendMessage();
+        userSendMessage.setChatId(this.update.getMessage().getChatId());
+
+        // NOTE (Roger): Falta hacer que coja el numero pasado por pregunta y lo use
+        // como 2do parametro en setVeracity
+        if (Similarity.compare(userRequestString, "Cambiar veracidad a") > 0.63)
+        {
+            saveVeracity(userRequestString, userSendMessage);
+        }
+        else
+        {
+            processUserMessage(userRequestString, userSendMessage);
+        }
+    }
 }
