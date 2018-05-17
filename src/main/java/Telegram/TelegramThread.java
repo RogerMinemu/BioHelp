@@ -30,6 +30,7 @@ public class TelegramThread extends Thread
 	public void run()
 	{
 		String input = this.update.getMessage().getText();
+		log.info("Question: " + input);
 		
 		if(Similarity.compare(input, "cambiar veracidad") > 8)
 		{

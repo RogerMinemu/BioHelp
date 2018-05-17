@@ -55,6 +55,7 @@ public class Main
 		while(true)
 		{
 			String input = consoleInput.nextLine();
+			log.info("Question: " + input);
 
 			if(input.equals("exit"))
 			{
