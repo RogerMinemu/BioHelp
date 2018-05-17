@@ -114,8 +114,8 @@ public class BioHelpSQLConnector
 			else
 			{
 				log.info("Else - getVeracity");
-				resultSet.beforeFirst();
-				return resultSet.getInt(0);
+				//resultSet.beforeFirst();
+				return resultSet.getInt("veracity_percent");
 			}
 		}
 		catch(SQLException e)
@@ -130,11 +130,8 @@ public class BioHelpSQLConnector
 	{
 		try
 		{
-			if(getVeracity(chatID) == -1)
-			{
-				this.statement.executeUpdate("INSERT INTO chatVeracity (chatID, veracity_percent) VALUES(" + chatID + ", " + veracity + ");");
-				return "Veracidad cambiada correctamente";
-			}
+			this.statement.executeUpdate("INSERT INTO chatVeracity (chatID, veracity_percent) VALUES(" + chatID + ", " + veracity + ");");
+			return "Veracidad cambiada correctamente";
 		}
 		catch(SQLException e)
 		{
@@ -142,4 +139,5 @@ public class BioHelpSQLConnector
 		}
 		return "No es posible cambiar la veracidad en este momento";
 	}
+
 }

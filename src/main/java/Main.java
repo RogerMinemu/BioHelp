@@ -52,7 +52,8 @@ public class Main
 		Scanner consoleInput = new Scanner(System.in);
 		log.info("Successfully Loaded. Now you can test questions as a command");
 
-		bioDBConnector.setVeracity(13230865, 100);
+		log.info(bioDBConnector.getVeracity(13230865));
+		//bioDBConnector.setVeracity(13230865, 100);
 		
 		while(true)
 		{
