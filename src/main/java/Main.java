@@ -19,68 +19,68 @@ import Telegram.TelegramListener;
 
 public class Main
 {
-	public static void main(String[] args)
-	{
-		PropertyConfigurator.configure("log4j.properties");
-		Logger log = Logger.getLogger("BioHelp");
+    public static void main(String[] args)
+    {
+        PropertyConfigurator.configure("log4j.properties");
+        Logger log = Logger.getLogger("BioHelp");
 
-		log.info("https://github.com/RogerMinemu/BioHelp");
-		log.info("======================================");
-		
-		log.info("Trying to load config in: " + args[0]);
-		JsonReader jr = new JsonReader(args[0]);
+        log.info("https://github.com/RogerMinemu/BioHelp");
+        log.info("======================================");
 
-		BioHelpSQLConnector bioDBConnector = new BioHelpSQLConnector(jr.getField("dbhostname"), jr.getField("dbusername"), jr.getField("dbpassword"), jr.getField("database"));
-		Vector<BioData> bioData = bioDBConnector.getAllData();
+        log.info("Trying to load config in: " + args[0]);
+        JsonReader jr = new JsonReader(args[0]);
 
-		// Telegram Init
-		ApiContextInitializer.init();
-		TelegramBotsApi botsApi = new TelegramBotsApi();
+        BioHelpSQLConnector bioDBConnector = new BioHelpSQLConnector(jr.getField("dbhostname"), jr.getField("dbusername"), jr.getField("dbpassword"), jr.getField("database"));
+        Vector<BioData> bioData = bioDBConnector.getAllData();
 
-		TelegramListener telegramListener = new TelegramListener(jr.getField("telegramBotAPI"), bioData, bioDBConnector);
-		(new DBListener(telegramListener, bioDBConnector)).start();
+        // Telegram Init
+        ApiContextInitializer.init();
+        TelegramBotsApi botsApi = new TelegramBotsApi();
 
-		try
-		{
-			botsApi.registerBot(telegramListener);
-		}
-		catch (TelegramApiException e)
-		{
-			e.printStackTrace();
-		}
-		
-		Scanner consoleInput = new Scanner(System.in);
-		log.info("Successfully Loaded. Now you can test questions as a command");
-		
-		while(true)
-		{
-			String input = consoleInput.nextLine();
-			log.info("Question: " + input);
+        TelegramListener telegramListener = new TelegramListener(jr.getField("telegramBotAPI"), bioData, bioDBConnector);
+        (new DBListener(telegramListener, bioDBConnector)).start();
 
-			if(input.equals("exit"))
-			{
-				break;
-			}
+        try
+        {
+            botsApi.registerBot(telegramListener);
+        }
+        catch (TelegramApiException e)
+        {
+            e.printStackTrace();
+        }
 
-			double simint = 0;
-			int simpos = 0;
+        Scanner consoleInput = new Scanner(System.in);
+        log.info("Successfully Loaded. Now you can test questions as a command");
 
-			for(int i = 0; i < bioData.size(); i++)
-			{
-				if(simint < Similarity.compare(input, bioData.get(i).question))
-				{
-					simpos = i;
-					simint = Similarity.compare(input, bioData.get(i).question);
-					log.info("New veracity record: " + simint);
-				}
-			}
+        while (true)
+        {
+            String input = consoleInput.nextLine();
+            log.info("Question: " + input);
 
-			log.info(bioData.get(simpos).answer);
-		}
+            if (input.equals("exit"))
+            {
+                break;
+            }
 
-		log.info("Exit the application");
-		consoleInput.close();
+            double simint = 0;
+            int simpos = 0;
 
-		System.exit(0);
-	}
+            for (int i = 0; i < bioData.size(); i++)
+            {
+                if (simint < Similarity.compare(input, bioData.get(i).question))
+                {
+                    simpos = i;
+                    simint = Similarity.compare(input, bioData.get(i).question);
+                    log.info("New veracity record: " + simint);
+                }
+            }
+
+            log.info(bioData.get(simpos).answer);
+        }
+
+        log.info("Exit the application");
+        consoleInput.close();
+
+        System.exit(0);
+    }
 }

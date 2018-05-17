@@ -68,7 +68,7 @@ public class TelegramListener extends TelegramLongPollingBot
 	    // NOTE(Andrei): Unlock the writer as is done using the data.
 	    this.readWriteLock.readLock().unlock();
 
-		try
+        try
 		{
 			execute(userMessage);
 		}
