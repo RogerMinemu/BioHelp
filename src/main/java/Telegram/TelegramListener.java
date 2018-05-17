@@ -45,7 +45,7 @@ public class TelegramListener extends TelegramLongPollingBot
 	{
 		if (update.hasMessage() && update.getMessage().hasText())
 		{
-			log.info("Creating Thread for user @" + update.getMessage().getFrom().getUserName() + ": " + update.getMessage().getText());
+			log.info("Creating Thread for user @" + update.getMessage().getFrom().getUserName() + "(" + update.getMessage().getChatId() + "): " + update.getMessage().getText());
 
 			// NOTE(Andrei): Allow multiple readers as long as no writer is waiting,
 			//               the unlock is done in sendResponse functions because is
