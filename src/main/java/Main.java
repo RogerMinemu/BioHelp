@@ -13,6 +13,8 @@ import Holders.BioData;
 import Readers.JsonReader;
 import Readers.BioHelpSQLConnector;
 
+import TextUtils.Similarity;
+
 import Telegram.TelegramListener;
 
 public class Main
@@ -35,7 +37,7 @@ public class Main
 		ApiContextInitializer.init();
 		TelegramBotsApi botsApi = new TelegramBotsApi();
 
-		TelegramListener telegramListener = new TelegramListener(jr.getField("telegramBotAPI"), bioData);
+		TelegramListener telegramListener = new TelegramListener(jr.getField("telegramBotAPI"), bioData, bioDBConnector);
 		(new DBListener(telegramListener, bioDBConnector)).start();
 
 		try
@@ -48,10 +50,10 @@ public class Main
 		}
 		
 		Scanner consoleInput = new Scanner(System.in);
-
+		log.info("Successfully Loaded. Now you can test questions as a command");
+		
 		while(true)
 		{
-			log.info("Some testing input: ");
 			String input = consoleInput.nextLine();
 
 			if(input.equals("exit"))

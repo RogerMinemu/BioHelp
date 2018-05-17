@@ -7,18 +7,20 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 
 import Holders.BioData;
-
+import Readers.BioHelpSQLConnector;
+import Readers.JsonReader;
 import TextUtils.Similarity;
 
 public class TelegramThread extends Thread
 {
 	private Update update;
 	private Vector<BioData> bioData;
+	private BioHelpSQLConnector bioDBConnector;
 
 	private TelegramListener telegramListener;
 	private Logger log = Logger.getLogger("Telegram Thread");
 
-	public TelegramThread(Update update, Vector<BioData> bioData, TelegramListener telegramListener)
+	public TelegramThread(Update update, Vector<BioData> bioData, TelegramListener telegramListener, BioHelpSQLConnector bioDBConnector)
 	{
 		this.update = update;
 		this.bioData = bioData;
@@ -28,6 +30,11 @@ public class TelegramThread extends Thread
 	public void run()
 	{
 		String input = this.update.getMessage().getText();
+		
+		if(Similarity.compare(input, "cambiar veracidad") > 8)
+		{
+			
+		}
 
 		double simint = 0;
 		int simpos = 0;
@@ -38,15 +45,23 @@ public class TelegramThread extends Thread
 			{
 				simpos = i;
 				simint = Similarity.compare(input, this.bioData.get(i).question);
-
-				log.info("New veracity record: " + simint);
 			}
 		}
-
-		String answer = this.bioData.get(simpos).answer;
+		
+		String answer;
+		
+		if(simint < 0.5)	//if veracity is under %
+		{
+			answer = "BioHelp no sabe que estás preguntando, prueba a formular de diferente manera la pregunta.";
+			log.warn("Veracity: " + simint + " - BioHelp doesn't know what is the user asking");
+		}
+		else
+		{
+			answer = this.bioData.get(simpos).answer;
+			log.info("Veracity: " + simint + " - " + answer);
+		}
+		
 		SendMessage userMessage = new SendMessage();
-		log.info(answer);
-
 		userMessage.setChatId(this.update.getMessage().getChatId());
 		userMessage.setText(answer);
 
