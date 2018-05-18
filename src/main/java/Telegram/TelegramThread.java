@@ -9,6 +9,7 @@ import org.telegram.telegrambots.api.objects.Update;
 import Holders.BioData;
 import Readers.BioHelpSQLConnector;
 import Readers.JsonReader;
+import TextUtils.Filter;
 import TextUtils.Similarity;
 
 public class TelegramThread extends Thread
@@ -36,7 +37,8 @@ public class TelegramThread extends Thread
 
         if (this.bioDBConnector.getVeracity(chatID) == -1)
         {
-            userMessage = this.bioDBConnector.setVeracity(chatID, 50);
+        	Filter fl = new Filter(userRequestString);
+            userMessage = this.bioDBConnector.setVeracity(chatID, fl.getNumber());
         }
 
         userSendMessage.setText(userMessage);
@@ -45,9 +47,17 @@ public class TelegramThread extends Thread
 
     private void processUserMessage(String userRequestString, SendMessage userSendMessage)
     {
-        double simint = 0;
+    	long chatID = Long.parseLong(userSendMessage.getChatId());
+    	double personalVeracity = this.bioDBConnector.getVeracity(chatID)/100;
+    	double simint = 0;
         int simpos = 0;
-
+        
+        
+    	if(personalVeracity == -1)
+    	{
+    		personalVeracity = 0.6;
+    	}
+        
         for (int i = 0; i < this.bioData.size(); i++)
         {
             if (simint < Similarity.compare(userRequestString, this.bioData.get(i).question))
@@ -57,7 +67,7 @@ public class TelegramThread extends Thread
             }
         }
 
-        if (simint < 0.5) // if veracity is under %
+        if (simint < personalVeracity) // if veracity is under personal value
         {
             userSendMessage.setText("BioHelp no sabe que estás preguntando, prueba a formular de diferente manera la pregunta.");
             log.warn("Veracity: " + simint + " - BioHelp doesn't know what is the user asking");

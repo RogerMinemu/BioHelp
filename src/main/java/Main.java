@@ -12,7 +12,7 @@ import Holders.BioData;
 
 import Readers.JsonReader;
 import Readers.BioHelpSQLConnector;
-
+import TextUtils.Filter;
 import TextUtils.Similarity;
 
 import Telegram.TelegramListener;
@@ -52,8 +52,8 @@ public class Main
 		Scanner consoleInput = new Scanner(System.in);
 		log.info("Successfully Loaded. Now you can test questions as a command");
 
-		log.info(bioDBConnector.getVeracity(13230865));
-		//bioDBConnector.setVeracity(13230865, 100);
+		Filter fl = new Filter("Cambiar veracidad a 50");
+		log.info("Veracidad cambiada a: " + fl.getNumber());
 		
 		while(true)
 		{

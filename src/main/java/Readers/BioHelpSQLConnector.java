@@ -126,11 +126,11 @@ public class BioHelpSQLConnector
 		return -1;
 	}
 	
-	public String setVeracity(long chatID, int veracity)
+	public String setVeracity(long chatID, String string)
 	{
 		try
 		{
-			this.statement.executeUpdate("INSERT INTO chatVeracity (chatID, veracity_percent) VALUES(" + chatID + ", " + veracity + ");");
+			this.statement.executeUpdate("INSERT INTO chatVeracity (chatID, veracity_percent) VALUES(" + chatID + ", " + string + ");");
 			return "Veracidad cambiada correctamente";
 		}
 		catch(SQLException e)
