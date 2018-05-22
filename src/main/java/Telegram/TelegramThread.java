@@ -35,11 +35,8 @@ public class TelegramThread extends Thread
         long chatID = Long.parseLong(userSendMessage.getChatId());
         String userMessage = "Veracidad cambiada correctamente.";
 
-        if (this.bioDBConnector.getVeracity(chatID) == -1)
-        {
-        	Filter fl = new Filter(userRequestString);
-            userMessage = this.bioDBConnector.setVeracity(chatID, fl.getNumber());
-        }
+        Filter fl = new Filter(userRequestString);
+        userMessage = this.bioDBConnector.updateVeracity(chatID+"", fl.getNumber());
 
         userSendMessage.setText(userMessage);
         this.telegramListener.sendResponse(userSendMessage);
@@ -48,14 +45,17 @@ public class TelegramThread extends Thread
     private void processUserMessage(String userRequestString, SendMessage userSendMessage)
     {
     	long chatID = Long.parseLong(userSendMessage.getChatId());
-    	double personalVeracity = this.bioDBConnector.getVeracity(chatID)/100;
+    	double personalVeracity = this.bioDBConnector.getVeracity(chatID+"");
     	double simint = 0;
         int simpos = 0;
-        
         
     	if(personalVeracity == -1)
     	{
     		personalVeracity = 0.6;
+    	}
+    	else
+    	{
+    		personalVeracity = personalVeracity / 100;
     	}
         
         for (int i = 0; i < this.bioData.size(); i++)

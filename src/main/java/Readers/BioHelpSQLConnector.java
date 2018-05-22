@@ -100,13 +100,20 @@ public class BioHelpSQLConnector
 		return retData;
 	}
 	
-	public int getVeracity(long chatID)
+	public int getVeracity(String chatID)
 	{
 		try
 		{
-			log.info("PRE-QUERY - getVeracity");
-			ResultSet resultSet = this.statement.executeQuery("SELECT veracity_percent FROM `chatVeracity` WHERE chatID =" + chatID + ";");
-			log.info("IF - getVeracity");
+			ResultSet resultSet = this.statement.executeQuery("SELECT veracity_percent FROM `chatVeracity` WHERE chatID ='" + chatID + "';");
+			
+			while (resultSet.next())
+			{
+				return resultSet.getInt("veracity_percent");
+			}
+			
+			return -1;
+			
+			/*
 			if(resultSet.next() == false)
 			{
 				return -1;
@@ -117,6 +124,7 @@ public class BioHelpSQLConnector
 				//resultSet.beforeFirst();
 				return resultSet.getInt("veracity_percent");
 			}
+			*/
 		}
 		catch(SQLException e)
 		{
@@ -126,11 +134,37 @@ public class BioHelpSQLConnector
 		return -1;
 	}
 	
-	public String setVeracity(long chatID, String string)
+	public String updateVeracity(String chatID, String veracity)
+	{
+		log.info("VERACITY: TRACE1" + getVeracity(chatID));
+		if(getVeracity(chatID) == -1)
+		{
+			log.info("VERACITY: REGISTER VERACITY");
+			setVeracity(chatID, veracity);
+			return "Veracidad personal registrada";
+		}
+		else
+		{
+			log.info("VERACITY: UPDATING VERACITY");
+			try
+			{
+				this.statement.executeUpdate("UPDATE chatveracity SET veracity_percent = " + veracity + " WHERE chatID = '" + chatID + "';");
+				return "Veracidad personal actualizada";
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		return "No es posible cambiar la veracidad en este momento";
+	}
+	
+	public String setVeracity(String chatID, String string)
 	{
 		try
 		{
-			this.statement.executeUpdate("INSERT INTO chatVeracity (chatID, veracity_percent) VALUES(" + chatID + ", " + string + ");");
+			this.statement.executeUpdate("INSERT INTO chatVeracity (chatID, veracity_percent) VALUES('" + chatID + "', " + string + ");");
 			return "Veracidad cambiada correctamente";
 		}
 		catch(SQLException e)

@@ -13,6 +13,7 @@ public class Filter {
 	{
 		String modinput = this.input;
 		modinput = modinput.replaceAll("[^\\d.]", "");
+		modinput = modinput.replaceAll(" ", "");
 		
 		return modinput;
 	}
